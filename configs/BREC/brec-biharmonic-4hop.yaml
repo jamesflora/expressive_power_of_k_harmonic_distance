@@ -1,0 +1,55 @@
+out_dir: results
+metric_best: accuracy
+wandb:
+  use: True
+  project: your-project
+  entity: your-wandb-profile
+  name: brec-biharmonic-2hop
+dataset:
+  split_mode: none # This currently does nothing for BREC
+  format: Custom
+  name: BREC
+  task: graph # Does nothing
+  task_type: classification # Does nothing (I think)
+  transductive: False
+  node_encoder: True
+  node_encoder_name: LinearNode
+  node_encoder_bn: False
+  edge_encoder: False
+  edge_encoder_bn: False
+posenc_edge:
+  enable: True
+  harmonic: biharmonic
+train:
+  mode: BREC
+  batch_size: 16 # full batch
+  eval_period: 1
+  enable_ckpt: True  # Checkpointing can now be disabled to save I/O when e.g. just benchmarking.
+  ckpt_best: True  # WARNING: Checkpoint every epoch a better model is found may increase I/O significantly.
+model:
+  type: custom_gnn
+  loss_fun: cross_entropy
+  edge_decoding: dot
+  graph_pooling: add 
+gnn:
+  head: default
+  layers_pre_mp: 0
+  layers_mp: 4
+  layers_post_mp: 3  # Not used when `gnn.head: san_graph`
+  dim_inner: 32  # `gt.dim_hidden` must match `gnn.dim_inner`
+  layer_type: gineconv
+  dim_out: 16
+  batchnorm: True
+  act: relu
+  dropout: 0.0
+  agg: mean
+  normalize_adj: False
+optim:
+  clip_grad_norm: True
+  clip_grad_norm_value: 5.0
+  optimizer: adamW
+  weight_decay: 0.01
+  base_lr: 0.001
+  max_epoch: 100
+  scheduler: polynomial_with_warmup
+  num_warmup_epochs: 5

@@ -1,0 +1,7 @@
+datasets/*
+results/*
+wandb/*
+
+!datasets/.gitkeep
+!results/.gitkeep
+!wandb/.gitkeep

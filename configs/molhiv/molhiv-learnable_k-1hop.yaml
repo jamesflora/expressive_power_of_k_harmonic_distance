@@ -1,0 +1,60 @@
+seed: 42
+out_dir: results
+metric_best: auc
+num_workers: 4
+wandb:
+  use: True
+  project: your-project
+  entity: your-wandb-profile
+  name: molhiv-learnable_k-1hop
+dataset:
+  format: OGB
+  name: ogbg-molhiv
+  task: graph 
+  task_type: classification
+  resample_negative: True
+  transductive: False
+  node_encoder: True
+  node_encoder_name: Atom+RPEMpnn
+  node_encoder_bn: False
+  edge_encoder: True
+  edge_encoder_name: Bond
+  edge_encoder_bn: False
+posenc_RPE:
+  enable: True 
+  num_in_degrees: 64
+  num_out_degrees: 64
+  learnable_kharmonic:
+    enable: True
+  num_rpes: 1
+train:
+  mode: custom
+  batch_size: 256
+  eval_period: 1
+  ckpt_period: 100
+model:
+  type: custom_gnn
+  loss_fun: cross_entropy
+  edge_decoding: dot
+gnn:
+  head: default
+  layers_pre_mp: 0
+  layers_mp: 1
+  layers_post_mp: 3  # Not used when `gnn.head: san_graph`
+  dim_inner: 32  # `gt.dim_hidden` must match `gnn.dim_inner`
+  layer_type: gineconv
+  dim_out: 16
+  batchnorm: True
+  act: relu
+  dropout: 0.0
+  agg: mean
+  normalize_adj: False
+optim:
+  optimizer: adamW
+  weight_decay: 0.0
+  base_lr: 0.001
+  max_epoch: 200
+  scheduler: reduce_on_plateau
+  reduce_factor: 0.5
+  schedule_patience: 10
+  min_lr: 1e-5
